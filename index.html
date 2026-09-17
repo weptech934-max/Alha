@@ -1,140 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الحجاب | هوية وعبادة</title></head>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نيون سيتي | مغامرة شوارع</title>
+  <style>
+    :root { --cyan:#5bf1ff; --pink:#ff4db8; --ink:#071120; --paper:#d9f5ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; overflow:hidden; background:#040714; color:var(--paper); font-family:Tahoma, Arial, sans-serif; }
+    canvas { width:100vw; height:100vh; display:block; image-rendering:pixelated; }
+    .scanlines { position:fixed; inset:0; pointer-events:none; opacity:.12; background:repeating-linear-gradient(0deg,transparent 0 3px,#b8edff 4px); mix-blend-mode:screen; }
+    #ui { position:fixed; inset:0; pointer-events:none; padding:clamp(15px,3vw,38px); display:flex; justify-content:space-between; align-items:flex-start; text-shadow:0 2px 4px #000; }
+    .brand { letter-spacing:2px; line-height:.92; font-weight:900; font-size:clamp(28px,4vw,56px); font-style:italic; color:#fff; }
+    .brand span { color:var(--pink); font-size:.52em; display:block; letter-spacing:6px; margin-top:7px; }
+    .panel { direction:rtl; text-align:right; min-width:205px; background:linear-gradient(135deg,#071426dc,#0c1733aa); border:1px solid #467fa2; border-right:4px solid var(--cyan); padding:14px 17px; box-shadow:0 8px 25px #0008; }
+    .wanted { color:#ffd253; letter-spacing:4px; font-size:20px; }
+    .money { color:#8affb0; font:700 25px monospace; margin:6px 0; }
+    #mission { position:fixed; bottom:35px; right:35px; max-width:360px; border-right-color:var(--pink); }
+    #mission b { color:var(--pink); display:block; margin-bottom:6px; }
+    #toast { position:fixed; top:52%; left:50%; transform:translate(-50%,-50%); padding:15px 25px; color:#fff; font-weight:bold; background:#101b36e8; border:1px solid var(--cyan); opacity:0; transition:opacity .25s; pointer-events:none; text-align:center; }
+    #help { position:fixed; bottom:34px; left:35px; color:#bfeaff; font-size:13px; line-height:1.7; direction:rtl; text-align:left; }
+    kbd { border:1px solid #7eabc3; border-bottom-width:3px; border-radius:3px; padding:1px 5px; color:white; background:#12233c; font-family:inherit; }
+    #start { position:fixed; inset:0; background:radial-gradient(circle at 50% 30%,#192b69aa,#03040e 70%); display:grid; place-items:center; text-align:center; z-index:2; }
+    #start .box { border:1px solid #4ee3ff; background:#071121ed; box-shadow:0 0 45px #145f83; padding:42px 52px; max-width:520px; margin:20px; }
+    h1 { margin:0; color:#fff; font-size:clamp(38px,7vw,72px); font-style:italic; line-height:.85; } h1 span { color:var(--pink); display:block; font-size:.39em; letter-spacing:12px; margin-top:15px; }
+    button { pointer-events:auto; cursor:pointer; font:700 17px Tahoma; color:#061120; border:0; padding:13px 34px; margin-top:22px; background:linear-gradient(90deg,var(--cyan),#fff); box-shadow:0 0 20px #45dff8; }
+    button:hover { filter:brightness(1.2); transform:translateY(-2px); }
+    .small { color:#a9bdd1; font-size:14px; line-height:1.8; }
+    /* يبقى الزر فوق شاشة البداية، حتى يمكن نسخ الملف قبل تشغيل اللعبة. */
+    #sourceButton { position:fixed; z-index:3; bottom:32px; left:32px; pointer-events:auto; margin:0; padding:9px 15px; font-size:13px; box-shadow:0 0 14px #45dff855; }
+    #sourceModal { position:fixed; inset:0; z-index:5; display:none; place-items:center; padding:20px; direction:rtl; background:#020713dd; }
+    #sourceModal.open { display:grid; }
+    .source-box { width:min(960px,100%); height:min(80vh,700px); padding:22px; text-align:right; background:#081426; border:1px solid var(--cyan); box-shadow:0 0 50px #164b73; }
+    .source-head { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .source-head h2 { margin:0; color:var(--cyan); font-size:20px; }
+    .source-actions { display:flex; gap:8px; direction:ltr; }
+    .source-actions button { margin:0; padding:8px 13px; font-size:13px; }
+    #sourceCode { direction:ltr; text-align:left; white-space:pre; overflow:auto; height:calc(100% - 53px); margin:16px 0 0; padding:16px; color:#c8f4ff; background:#030914; border:1px solid #244460; font:12px/1.55 Consolas, monospace; }
+    @media (max-width:650px) { #ui{padding:14px}.panel{min-width:155px;padding:9px 10px;font-size:13px}.money{font-size:18px} #mission{right:14px;bottom:15px;max-width:260px}#help{display:none}.brand{font-size:28px}#sourceButton{bottom:14px;left:14px}.source-box{padding:14px} }
+  </style>
+</head>
 <body>
-
-<div class="bg"></div>
-
-<!-- NAV -->
-<nav>
-  <a href="#home">الرئيسية</a>
-  <a href="#quran">القرآن</a>
-  <a href="#hadith">السنة</a>
-  <a href="#rules">الأحكام</a>
-  <a href="#virtues">الفضائل</a>
-  <a href="#oath">العهد</a>
-</nav>
-
-<!-- HERO -->
-<div class="hero" id="home">
-  <h1>الحجاب</h1>
-  <p>عبادة… ستر… وهوية إسلامية</p>
-</div>
-
-<!-- QURAN -->
-<section id="quran">
-  <div class="grid">
-
-    <div class="card">
-      <h3>📖 القرآن</h3>
-      <p>﴿وَلَا يُبْدِينَ زِينَتَهُنَّ﴾</p>
-    </div>
-
-    <div class="card">
-      <h3>📖 القرآن</h3>
-      <p>﴿يُدْنِينَ عَلَيْهِنَّ مِن جَلَابِيبِهِنَّ﴾</p>
-    </div>
-
-    <div class="card">
-      <h3>📖 الحكمة</h3>
-      <p>الحجاب حفظ وستر ووقار</p>
-    </div>
-
-  </div>
-</section>
-
-<!-- HADITH -->
-<section id="hadith">
-  <div class="grid">
-
-    <div class="card">
-      <h3>📜 حديث</h3>
-      <p>"الحياء شعبة من الإيمان"</p>
-    </div>
-
-    <div class="card">
-      <h3>📜 حديث</h3>
-      <p>"المرأة عورة فإذا خرجت استشرفها الشيطان"</p>
-    </div>
-
-    <div class="card">
-      <h3>📜 معنى</h3>
-      <p>الحجاب من الحياء الذي يحبه الله</p>
-    </div>
-
-  </div>
-</section>
-
-<!-- RULES -->
-<section id="rules">
-  <div class="grid">
-
-    <div class="card">
-      <h3>✔ الشروط</h3>
-      <p>ستر كامل - غير شفاف - غير ضيق</p>
-    </div>
-
-    <div class="card">
-      <h3>❌ الأخطاء</h3>
-      <p>تبرج - زينة لافتة - ملابس ضيقة</p>
-    </div>
-
-    <div class="card">
-      <h3>⚖ الحكم</h3>
-      <p>فرض على كل مسلمة</p>
-    </div>
-
-  </div>
-</section>
-
-<!-- VIRTUES -->
-<section id="virtues">
-  <div class="grid">
-
-    <div class="card">
-      <h3>✨ الفضائل</h3>
-      <p>يرفع المكانة عند الله</p>
-    </div>
-
-    <div class="card">
-      <h3>🛡️ الحماية</h3>
-      <p>يحفظ المرأة من الفتن</p>
-    </div>
-
-    <div class="card">
-      <h3>🌿 الطهارة</h3>
-      <p>يطهر القلب والمجتمع</p>
-    </div>
-
-  </div>
-</section>
-
-<!-- OATH -->
-<section id="oath">
-  <div class="cta">
-
-    <h2 style="color:#ffd700">🤍 عهد مع الله</h2>
-
-    <p style="color:#cbd5e1;margin-top:10px;">
-      اجعلي نيتك خالصة لله
-    </p>
-
-    <button class="btn" onclick="oath()">
-      أعاهد الله على التوبة
-    </button>
-
-    <div class="message" id="msg">
-      جزاكي الله خير 🤍
-    </div>
-
-  </div>
-</section>
-
-<footer>
-  موقع توعوي عن الحجاب والقيم الإسلامية
-</footer></body>
+  <canvas id="game"></canvas><div class="scanlines"></div>
+  <div id="start"><div class="box"><h1>NEON <span>CITY</span></h1><p>مغامرة شوارع بطابع الثمانينات</p><p class="small">اكتشف المدينة، اجمع الحزم الوردية، واهرب من الشرطة.<br>نسخة أصلية مصغرة مستوحاة من ألعاب العالم المفتوح.</p><button id="play">ابدأ الجولة</button></div></div>
+  <div id="ui"><div class="brand">NEON<span>CITY</span></div><div class="panel"><div>الحالة <span id="health">█████</span></div><div class="wanted" id="stars">☆☆☆☆☆</div><div class="money" id="money">$ 000000</div><small id="speed">على الأقدام</small></div></div>
+  <div class="panel" id="mission"><b>مهمة: ضوء منتصف الليل</b><span id="missionText">اذهب إلى العلامة الوردية واجمع 5 حزم.</span></div>
+  <div id="help"><kbd>WASD</kbd> / الأسهم: تحرك &nbsp; <kbd>E</kbd>: اركب / انزل<br><kbd>Shift</kbd>: تسارع بالسيارة &nbsp; <kbd>R</kbd>: إعادة الجولة</div><div id="toast"></div>
+  <button id="sourceButton" aria-label="عرض ونسخ كود اللعبة">&lt;/&gt; انسخ كود اللعبة</button>
+  <div id="sourceModal" aria-hidden="true"><div class="source-box"><div class="source-head"><h2>كود اللعبة الكامل</h2><div class="source-actions"><button id="copyCode">نسخ الكود</button><button id="closeCode">إغلاق</button></div></div><pre id="sourceCode"></pre></div></div>
+<script>
+(() => {
+  const c=document.querySelector('#game'), x=c.getContext('2d'); let W,H,D;
+  const keys={}, down=e=>{keys[e.key.toLowerCase()]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault()}, up=e=>keys[e.key.toLowerCase()]=false;
+  addEventListener('keydown',down); addEventListener('keyup',up); addEventListener('resize',resize);
+  function resize(){D=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.width=W*D;c.height=H*D;x.setTransform(D,0,0,D,0,0)} resize();
+  const world={w:2800,h:2200}, player={x:1380,y:1080,a:0,health:5,money:0,inCar:null}, cam={x:0,y:0};
+  const roads=[{x:0,y:875,w:2800,h:310},{x:870,y:0,w:350,h:2200},{x:0,y:1650,w:2800,h:260},{x:1880,y:0,w:300,h:2200}];
+  const buildings=[]; for(let gx=70;gx<world.w;gx+=390)for(let gy=70;gy<world.h;gy+=350){if(!roads.some(r=>gx+250>r.x&&gx<r.x+r.w&&gy+220>r.y&&gy<r.y+r.h)) buildings.push({x:gx,y:gy,w:170+((gx+gy)%80),h:150+((gx*gy)%65),hue:(gx+gy)%2?210:295});}
+  const car={x:1030,y:1305,a:-Math.PI/2,spd:0,color:'#ff4b9f'}, police=[{x:1950,y:1300,a:0},{x:450,y:1025,a:0}];
+  const packs=[{x:1510,y:550},{x:2480,y:1040},{x:600,y:1790},{x:1440,y:2010},{x:2350,y:510}].map((p,i)=>({...p,got:false,i})); let started=false, won=false, toastT=0, last=0;
+  const $=s=>document.querySelector(s); function toast(t){$('#toast').textContent=t;$('#toast').style.opacity=1;toastT=2.1}
+  function reset(){player.x=1380;player.y=1080;player.health=5;player.money=0;player.inCar=null;car.x=1030;car.y=1305;car.a=-Math.PI/2;car.spd=0;packs.forEach(p=>p.got=false);won=false; $('#missionText').textContent='اذهب إلى العلامة الوردية واجمع 5 حزم.';toast('جولة جديدة — حظاً سعيداً!')}
+  function roadAt(a,b){return roads.some(r=>a>r.x&&a<r.x+r.w&&b>r.y&&b<r.y+r.h)}
+  function update(dt){if(!started)return; if(keys.r){keys.r=false;reset()} let controlled=player.inCar?car:player, v=player.inCar?(keys.shift?270:175):135;
+    let dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0); if(dx||dy){let l=Math.hypot(dx,dy);dx/=l;dy/=l;controlled.x+=dx*v*dt;controlled.y+=dy*v*dt;controlled.a=Math.atan2(dy,dx);}
+    controlled.x=Math.max(20,Math.min(world.w-20,controlled.x));controlled.y=Math.max(20,Math.min(world.h-20,controlled.y));
+    if(player.inCar){car.spd=Math.hypot(dx,dy)*v; player.x=car.x;player.y=car.y}else car.spd=0;
+    if(keys.e&&!keys.eLock){keys.eLock=true;let d=Math.hypot(player.x-car.x,player.y-car.y);if(player.inCar){player.inCar=null;player.x+=42;player.y+=20;toast('نزلت من السيارة')}else if(d<76){player.inCar=car;toast('انطلقت!')} } if(!keys.e)keys.eLock=false;
+    packs.forEach(p=>{if(!p.got&&Math.hypot(player.x-p.x,player.y-p.y)<44){p.got=true;player.money+=500;toast('+ $500  حزمة مضبوطة');let n=packs.filter(q=>q.got).length;if(n===5){won=true;$('#missionText').textContent='أكملت المهمة! المدينة ملكك الآن.';toast('أحسنت! أنهيت المهمة +$2,500')}else $('#missionText').textContent=`تم جمع ${n} من 5 حزم. تابع العلامات الوردية.`;}});
+    let level=packs.filter(p=>p.got).length; police.forEach((p,i)=>{if(level>1){let a=Math.atan2(player.y-p.y,player.x-p.x);p.x+=Math.cos(a)*(55+level*12)*dt;p.y+=Math.sin(a)*(55+level*12)*dt;p.a=a;if(Math.hypot(player.x-p.x,player.y-p.y)<50){player.health=Math.max(0,player.health-dt*.5);if(player.health<=0)reset()}}});
+    cam.x+=(player.x-W/2-cam.x)*Math.min(1,dt*4);cam.y+=(player.y-H/2-cam.y)*Math.min(1,dt*4);cam.x=Math.max(0,Math.min(world.w-W,cam.x));cam.y=Math.max(0,Math.min(world.h-H,cam.y));
+    $('#money').textContent='$ '+String(player.money).padStart(6,'0');$('#health').textContent='█'.repeat(Math.ceil(player.health))+'░'.repeat(5-Math.ceil(player.health));$('#stars').textContent='★'.repeat(Math.min(5,Math.max(0,level-1)))+'☆'.repeat(5-Math.min(5,Math.max(0,level-1)));$('#speed').textContent=player.inCar?'سيارة  '+Math.round(car.spd)+' كم/س':'على الأقدام'; if(toastT>0){toastT-=dt;if(toastT<=0)$('#toast').style.opacity=0}
+  }
+  function rect(o,fill){x.fillStyle=fill;x.fillRect(o.x-cam.x,o.y-cam.y,o.w,o.h)}
+  function drawCar(p,color,policeCar=false){let px=p.x-cam.x,py=p.y-cam.y;x.save();x.translate(px,py);x.rotate(p.a);x.fillStyle='#02050a';x.fillRect(-24,-13,48,26);x.fillStyle=color;x.fillRect(-21,-11,42,22);x.fillStyle='#a9eaff';x.fillRect(3,-8,13,16);if(policeCar){x.fillStyle='#fff';x.fillRect(-4,-14,10,3);x.fillStyle='#ff315c';x.fillRect(-4,-15,5,3);x.fillStyle='#31c8ff';x.fillRect(1,-15,5,3)}x.restore()}
+  function draw(){x.fillStyle='#123b49';x.fillRect(0,0,W,H); x.save();x.translate(-cam.x,-cam.y); x.fillStyle='#254a41';x.fillRect(0,0,world.w,world.h);roads.forEach(r=>{x.fillStyle='#182031';x.fillRect(r.x,r.y,r.w,r.h);x.strokeStyle='#314256';x.lineWidth=4;x.strokeRect(r.x,r.y,r.w,r.h);x.strokeStyle='#d6bd69';x.lineWidth=2;x.setLineDash([18,18]);x.beginPath();if(r.w>r.h){x.moveTo(r.x,r.y+r.h/2);x.lineTo(r.x+r.w,r.y+r.h/2)}else{x.moveTo(r.x+r.w/2,r.y);x.lineTo(r.x+r.w/2,r.y+r.h)}x.stroke();x.setLineDash([])});x.restore();
+    buildings.forEach(b=>{let bx=b.x-cam.x,by=b.y-cam.y;x.fillStyle='#07101f';x.fillRect(bx+7,by+9,b.w,b.h);x.fillStyle=`hsl(${b.hue},35%,24%)`;x.fillRect(bx,by,b.w,b.h);x.fillStyle=`hsl(${b.hue},70%,62%)`;for(let i=12;i<b.w-10;i+=24)for(let j=14;j<b.h-9;j+=25)x.fillRect(bx+i,by+j,8,6)});
+    packs.forEach(p=>{if(!p.got){let px=p.x-cam.x,py=p.y-cam.y;x.save();x.translate(px,py);x.rotate(performance.now()/350);x.shadowColor='#ff2fae';x.shadowBlur=18;x.fillStyle='#ff61be';x.fillRect(-12,-12,24,24);x.fillStyle='#fff';x.fillRect(-3,-12,6,24);x.restore();}}); drawCar(car,car.color);police.forEach(p=>drawCar(p,'#243a62',true));if(!player.inCar){let px=player.x-cam.x,py=player.y-cam.y;x.fillStyle='#f4c6a5';x.beginPath();x.arc(px,py-8,9,0,7);x.fill();x.fillStyle='#e8f1fb';x.fillRect(px-8,py,16,19);x.fillStyle='#ff4db8';x.fillRect(px-9,py+16,18,5)}
+    const near=Math.hypot(player.x-car.x,player.y-car.y)<76&&!player.inCar;if(near){x.fillStyle='#fff';x.font='bold 14px Tahoma';x.textAlign='center';x.fillText('اضغط E للقيادة',car.x-cam.x,car.y-cam.y-32)} if(won){x.fillStyle='rgba(255,77,184,.12)';x.fillRect(0,0,W,H)}
+  }
+  function loop(t){let dt=Math.min(.033,(t-last)/1000||0);last=t;update(dt);draw();requestAnimationFrame(loop)}requestAnimationFrame(loop);
+  $('#play').onclick=()=>{$('#start').style.display='none';started=true;toast('مرحباً بك في نيون سيتي')};
+  const sourceModal=$('#sourceModal'), sourceCode=$('#sourceCode');
+  $('#sourceButton').onclick=()=>{sourceCode.textContent='<!doctype html>\n'+document.documentElement.outerHTML;sourceModal.classList.add('open');sourceModal.setAttribute('aria-hidden','false')};
+  $('#closeCode').onclick=()=>{sourceModal.classList.remove('open');sourceModal.setAttribute('aria-hidden','true')};
+  $('#copyCode').onclick=async()=>{const code=sourceCode.textContent;try{await navigator.clipboard.writeText(code)}catch{const area=document.createElement('textarea');area.value=code;document.body.append(area);area.select();document.execCommand('copy');area.remove()}$('#copyCode').textContent='تم النسخ ✓';setTimeout(()=>$('#copyCode').textContent='نسخ الكود',1500)};
+  sourceModal.onclick=e=>{if(e.target===sourceModal)$('#closeCode').click()};
+})();
+</script>
+</body>
 </html>
